@@ -10,6 +10,6 @@ COPY . .
 RUN ant
 
 # Copia el archivo WAR generado a Tomcat
-COPY build/VLSM05.war /usr/local/tomcat/webapps/ROOT.war
+COPY C:\Users\danna\OneDrive\Documentos\NetBeansProjects\VLSM05\dist\VLSM05.war C:\xampp\tomcat\webapps\ROOT
 
 EXPOSE 8080
