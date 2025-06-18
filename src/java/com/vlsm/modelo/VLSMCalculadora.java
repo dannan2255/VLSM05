@@ -17,8 +17,10 @@ public class VLSMCalculadora {
 
         for (int i = 0; i < octetos.length; i++) {
             int octeto = Integer.parseInt(octetos[i]);
+            
             String octBinario = String.format("%8s", Integer.toBinaryString(octeto)).replace(' ', '0');
             binario.append(octBinario);
+            
             if (i < octetos.length - 1) {
                 binario.append(".");
             }
@@ -32,7 +34,9 @@ public class VLSMCalculadora {
 
         for (int i = 0; i < octetos.length; i++) {
             int decimal = Integer.parseInt(octetos[i], 2);
+            
             ip.append(decimal);
+            
             if (i < octetos.length - 1) {
                 ip.append(".");
             }
@@ -41,17 +45,33 @@ public class VLSMCalculadora {
     }
 
     public static String obtenerMascaraDecimal(int prefijo) {
-        int mask = 0xFFFFFFFF << (32 - prefijo);
-        return String.format("%d.%d.%d.%d",
-                (mask >> 24) & 0xFF,
-                (mask >> 16) & 0xFF,
-                (mask >> 8) & 0xFF,
-                mask & 0xFF);
+        StringBuilder mascara = new StringBuilder();
+        int bitsRestantes = prefijo;  // Cuantos bits de la mascara estan en 1
+        
+        for (int i = 0; i < 4; i++) {
+            int octeto = 0;
+            
+            if (bitsRestantes >= 8) {
+                octeto = 255;
+                bitsRestantes -= 8;
+            } else if (bitsRestantes > 0) {
+                octeto = 256 - (int)Math.pow(2, 8 - bitsRestantes);
+                bitsRestantes = 0;
+            }
+            
+            mascara.append(octeto);
+            if (i < 3) {
+                mascara.append(".");
+            }
+        }
+        
+        return mascara.toString();
     }
 
     public static int calcularHostsNecesarios(int hostsSolicitados) {
         int totalNecesario = hostsSolicitados + 2;
         int potencia = 1;
+        
         while (potencia < totalNecesario) {
             potencia *= 2;
         }
@@ -64,11 +84,12 @@ public class VLSMCalculadora {
     }
 
     private static String longAIp(long ip) {
-        return String.format("%d.%d.%d.%d",
-                (ip >> 24) & 0xFF,
-                (ip >> 16) & 0xFF,
-                (ip >> 8) & 0xFF,
-                ip & 0xFF);
+        int octeto1 = (int)(ip / 16777216) % 256;
+        int octeto2 = (int)(ip / 65536) % 256;
+        int octeto3 = (int)(ip / 256) % 256;
+        int octeto4 = (int)(ip % 256);
+        
+        return octeto1 + "." + octeto2 + "." + octeto3 + "." + octeto4;
     }
 
     public static List<SubredInfo> calcularVLSM(String ipBase, int prefijoOriginal, List<Integer> hostsPorSubred) {
@@ -79,7 +100,7 @@ public class VLSMCalculadora {
         String[] octetos = ipBase.split("\\.");
         long ipBaseLong = 0;
         for (int i = 0; i < 4; i++) {
-            ipBaseLong = (ipBaseLong << 8) + Integer.parseInt(octetos[i]);
+            ipBaseLong = ipBaseLong * 256 + Integer.parseInt(octetos[i]);
         }
 
         long ipActual = ipBaseLong;
@@ -167,7 +188,7 @@ public class VLSMCalculadora {
         String[] octetos = ipBase.split("\\.");
         long ipBaseLong = 0;
         for (int i = 0; i < 4; i++) {
-            ipBaseLong = (ipBaseLong << 8) + Integer.parseInt(octetos[i]);
+            ipBaseLong = ipBaseLong * 256 + Integer.parseInt(octetos[i]);
         }
 
         long ipActual = ipBaseLong;

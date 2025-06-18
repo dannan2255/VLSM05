@@ -336,6 +336,8 @@
     <% } %>
     
     <!-- PASO 2: Este es el ingreso de Hosts por subred -->
+    
+    
     <% if (paso.equals("2")) { %>
     <div class="container">
         <h2>Paso 2: Configuración de Hosts por Subred</h2>
@@ -355,6 +357,7 @@
                 
                 if (!hostsActuales.isEmpty()) {
                     String[] hostsTemp = hostsActuales.split(",", -1);
+                    
                     for (int i = 0; i < hostsTemp.length && i < numSub; i++) {
                         hostsArray[i] = hostsTemp[i];
                     }
@@ -393,6 +396,7 @@
             %>
             
             <% if (!todosConfigurados && contadorSubred < numSub) { %>
+            
             <div class="form-group">
                 <label>¿Cuántos hosts necesita para la subred <%= contadorSubred + 1 %>?</label>
                 <input type="number" name="hostsSubred" placeholder="Número de hosts" min="1" required>
@@ -400,6 +404,7 @@
             <% } %>
             
             <% if (!hostsActuales.isEmpty()) { %>
+            
             <div class="resultado">
                 <h4>Hosts configurados:</h4>
                 <% 
@@ -435,7 +440,10 @@
     </div>
     <% } %>
     
+    
     <!-- PASO 3: Resultados -->
+    
+    
     <% if (paso.equals("3")) { %>
     <div class="container">
         <h2>Resultados VLSM</h2>

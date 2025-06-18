@@ -34,17 +34,14 @@
             return;
         }
         
-        // Configurar respuesta
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=\"VLSM_Reporte.pdf\"");
         
-        // Crear documento PDF
         Document documento = new Document(PageSize.A4);
         PdfWriter writer = PdfWriter.getInstance(documento, response.getOutputStream());
         
         documento.open();
         
-        // Título 
         Font tituloFont = new Font(Font.HELVETICA, 18, Font.BOLD);
         Font subtituloFont = new Font(Font.HELVETICA, 14, Font.BOLD);
         Font normalFont = new Font(Font.HELVETICA, 10, Font.NORMAL);
@@ -57,7 +54,6 @@
         
         documento.add(new Paragraph(" "));
         
-        // Información general
         Paragraph info = new Paragraph("Configuración de Red", subtituloFont);
         documento.add(info);
         documento.add(new Paragraph("Red base: " + ipBase + "/" + prefijo, normalFont));
@@ -72,7 +68,6 @@
         tabla.setWidthPercentage(100);
         tabla.setSpacingBefore(10f);
         
-        // Encabezados
         PdfPCell celda;
         String[] encabezados = {"Subred", "Dirección de Red", "Máscara", "Rango Inicio", "Rango Fin", "Broadcast", "Hosts"};
         
@@ -82,7 +77,6 @@
             tabla.addCell(celda);
         }
         
-        // Datos
         for (SubredInfo subred : subredes) {
             tabla.addCell(new Phrase(subred.getNombre(), normalFont));
             tabla.addCell(new Phrase(subred.getDireccionIp(), normalFont));
@@ -95,18 +89,16 @@
         
         documento.add(tabla);
         
-        // Nueva página para el proceso paso a paso
         documento.newPage();
         
         Paragraph procesoTitle = new Paragraph("Proceso Paso a Paso", subtituloFont);
         documento.add(procesoTitle);
         documento.add(new Paragraph(" "));
         
-        // Agregar proceso paso a paso
         if (pasoAPaso != null) {
             for (String paso : pasoAPaso) {
                 if (!paso.trim().isEmpty()) {
-                    // Usar fuente monoespaciada para el proceso
+                
                     Font fontToUse = paso.contains("/") && paso.contains("-->") ? monoBoldFont : monoFont;
                     Paragraph parrafo = new Paragraph(paso, fontToUse);
                     documento.add(parrafo);
@@ -117,11 +109,9 @@
         documento.close();
         
     } catch (Exception e) {
-        // Log del error para debugging
         e.printStackTrace();
         
-        // Limpiar el buffer de salida
-        response.reset();
+            response.reset();
         response.setContentType("text/html");
         
         out.println("<html><body>");
